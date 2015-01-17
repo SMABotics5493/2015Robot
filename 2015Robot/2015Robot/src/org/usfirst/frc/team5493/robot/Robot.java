@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class Robot extends IterativeRobot {
 	RobotDrive myRobot;
-	Joystick stick;
+	Joystick stickLeft;
+	Joystick stickRight;
 	int autoLoopCounter;
 	
     /**
@@ -23,7 +24,8 @@ public class Robot extends IterativeRobot {
      */
     public void robotInit() {
     	myRobot = new RobotDrive(0,1);
-    	stick = new Joystick(0);
+    	stickLeft = new Joystick(0);
+    	stickRight = new Joystick(1);
     }
     
     /**
@@ -56,7 +58,8 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        myRobot.arcadeDrive(stick);
+       // myRobot.arcadeDrive(stickLeft);
+        myRobot.tankDrive(stickLeft, stickRight);
     }
     
     /**
