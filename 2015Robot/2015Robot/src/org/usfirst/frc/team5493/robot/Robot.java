@@ -1,80 +1,46 @@
 package org.usfirst.frc.team5493.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
+
+import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 /**
+ * This is a demo program showing the use of the RobotDrive class, specifically it 
+ * contains the code necessary to operate a robot with tank drive.
+ *
  * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
+ * functions corresponding to each mode, as described in the SampleRobot
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the manifest file in the resource
  * directory.
+ *
+ * WARNING: While it may look like a good choice to use for your code if you're inexperienced,
+ * don't. Unless you know what you are doing, complex code will be much more difficult under
+ * this system. Use IterativeRobot or Command-Based instead if you're new.
  */
-public class Robot extends IterativeRobot {
-	RobotDrive myRobot;
-	Joystick stickLeft;
-	Joystick stickRight;
-	int autoLoopCounter;
+public class Robot extends SampleRobot {
+    RobotDrive myRobot;  // class that handles basic drive operations
+    Joystick leftStick;  // set to ID 1 in DriverStation
+    Joystick rightStick; // set to ID 2 in DriverStation
+    public Robot() {
+        myRobot = new RobotDrive(0, 1);
+        myRobot.setExpiration(0.1);
+        leftStick = new Joystick(1);
+        rightStick = new Joystick(2);
+    }
 
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
-	public void robotInit() {
-		myRobot = new RobotDrive(0, 1);
-		myRobot.setExpiration(0.1);
-		stickLeft = new Joystick(0);
-		stickRight = new Joystick(1);
-	}
-
-	/**
-	 * This function is run once each time the robot enters autonomous mode
-	 */
-	public void autonomousInit() {
-		autoLoopCounter = 0;
-	}
-
-	/**
-	 * This function is called periodically during autonomous
-	 */
-	public void autonomousPeriodic() {
-		if (autoLoopCounter < 100) // Check if we've completed 100 loops
-									// (approximately 2 seconds)
-		{
-			myRobot.drive(-0.5, 0.0); // drive forwards half speed
-			autoLoopCounter++;
-		} else {
-			myRobot.drive(0.0, 0.0); // stop robot
-		}
-	}
-
-	/**
-	 * This function is called once each time the robot enters tele-operated
-	 * mode
-	 */
-	public void teleopInit() {
-	}
-
-	/**
-	 * This function is called periodically during operator control
-	 */
-	public void teleopPeriodic() {
-		// myRobot.arcadeDrive(stickLeft);
-		myRobot.setSafetyEnabled(true);
-		while (isOperatorControl() && isEnabled()) {
-			myRobot.tankDrive(stickLeft, stickRight);
-			Timer.delay(0.005); // wait for a motor update time
-		}
-	}
-
-	/**
-	 * This function is called periodically during test mode
-	 */
-	public void testPeriodic() {
-		LiveWindow.run();
-	}
+    
+    /**
+     * Runs the motors with tank steering.
+     */
+    public void operatorControl() {
+        myRobot.setSafetyEnabled(true);
+        while (isOperatorControl() && isEnabled()) {
+        	myRobot.tankDrive(leftStick, rightStick);
+            Timer.delay(0.005);		// wait for a motor update time
+        }
+    }
 
 }
