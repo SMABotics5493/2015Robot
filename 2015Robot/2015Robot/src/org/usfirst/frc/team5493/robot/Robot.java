@@ -1,9 +1,9 @@
 package org.usfirst.frc.team5493.robot;
 
 
-import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -23,12 +23,18 @@ import edu.wpi.first.wpilibj.Timer;
 public class Robot extends SampleRobot {
     RobotDrive myRobot;  // class that handles basic drive operations
     Joystick leftStick;  // set to ID 1 in DriverStation
-    Joystick rightStick; // set to ID 2 in DriverStation
+    Joystick rightStick;
+    private static final int RIGHTDRIVE = 5;
+    private static final int LEFTDRIVE = 1;
     public Robot() {
-        myRobot = new RobotDrive(0, 1);
+        myRobot = new RobotDrive(1, 2);
         myRobot.setExpiration(0.1);
         leftStick = new Joystick(1);
-        rightStick = new Joystick(2);
+       // rightStick = new Joystick(1);
+        
+        
+//        getWatchdog().setEnabled(false);
+        //myRobot.setInvertedMotor(MotorType.kFrontLeft, true);
     }
 
     
@@ -37,9 +43,12 @@ public class Robot extends SampleRobot {
      */
     public void operatorControl() {
         myRobot.setSafetyEnabled(true);
-        while (isOperatorControl() && isEnabled()) {
-        	myRobot.tankDrive(leftStick, rightStick);
-            Timer.delay(0.005);		// wait for a motor update time
+        System.out.println("OperatorControl called");
+        while (true && isOperatorControl() && isEnabled()) {
+        	myRobot.tankDrive(leftStick.getRawAxis(RIGHTDRIVE), leftStick.getRawAxis(LEFTDRIVE));
+            
+        	Timer.delay(0.005);		// wait for a motor update time
+            System.out.println("in while");
         }
     }
 
