@@ -1,21 +1,12 @@
 package org.usfirst.frc.team5493.robot; //frc.team5493
-//import edu.wpi.first.wpilibj.CANTalon;
-//import edu.wpi.first.wpilibj.CANTalon.ControlMode;
-//import edu.wpi.first.wpilibj.IterativeRobot;
 
-import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CANTalon.ControlMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Relay;
+//import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.TalonSRX;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.buttons.Trigger;
-import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * A This is a demo program showing the use of the RobotDrive class,
@@ -35,49 +26,45 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class Robot extends SampleRobot {
 	RobotDrive myRobot; // class that handles basic drive operations
-	Joystick leftStick; // set to ID 1 in DriverStation
-	Joystick rightStick;
-	Relay relay = new Relay(3);
+	Joystick xboxStick; // set to ID 1 in DriverStation
+	// Joystick logiTech; // set to ID 2 in DriverStation
+	// Relay relay = new Relay(3);
 	private static final int DRIVERIGHT = 5;
 	private static final int DRIVELEFT = 1;
-	CANTalon leftFront = new CANTalon(1);
-	CANTalon leftRear = new CANTalon(2);
-	CANTalon rightFront = new CANTalon(3);
-	CANTalon rightRear = new CANTalon(4);
-	TalonSRX put = new TalonSRX(1);
+	Talon driveRight = new Talon(0);
+	Talon driveLeft = new Talon(2);
+	Talon put = new Talon(1);
 	final DriverStation ds = DriverStation.getInstance();
 	boolean engaged = false;
 
 	public Robot() {
-		myRobot = new RobotDrive(leftFront, leftRear, rightFront, rightRear);
+		myRobot = new RobotDrive(driveLeft, driveRight);
 		myRobot.setExpiration(0.1);
-		leftStick = new Joystick(1);
-
-
+		xboxStick = new Joystick(1);
+		// logiTech = new Joystick(2);
 	}
 
 	public void operatorControl() {
 		myRobot.isSafetyEnabled();
 		while (true && isOperatorControl() && isEnabled()) {
-			myRobot.tankDrive(leftStick.getRawAxis(DRIVERIGHT),
-					leftStick.getRawAxis(DRIVELEFT));
+			myRobot.tankDrive(xboxStick.getRawAxis(DRIVELEFT),
+					xboxStick.getRawAxis(DRIVERIGHT));
 
 			Timer.delay(0.005); // wait for a motor update time
 
-			if (leftStick.getRawButton(5)) {
+			// PUT control loop:
+			if (xboxStick.getRawButton(5)) {
 				DriverStation.reportError("DOWN", false);
 				put.set(.5);
-			}else if(leftStick.getRawButton(6)) {
+			} else if (xboxStick.getRawButton(6)) {
 				DriverStation.reportError("UP", false);
 				put.set(-.5);
-			}else if(leftStick.getRawButton(1)) {
-				DriverStation.reportError("ENGAGED", false);
+			} else if (xboxStick.getRawButton(1)) {
+				DriverStation.reportError("LATCH", false);
 				put.set(-.2);
-			}else{
-				DriverStation.reportError("Neg Button not clicked", false);
-						put.set(0);
-					}
+			} else {
+				put.set(0);
 			}
-	}	
+		}
 	}
-
+}
