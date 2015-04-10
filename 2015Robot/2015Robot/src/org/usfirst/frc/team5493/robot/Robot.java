@@ -2,13 +2,12 @@ package org.usfirst.frc.team5493.robot; //frc.team5493
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
-//import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Victor;
 
 /**
  * A This is a demo program showing the use of the RobotDrive class,
@@ -30,24 +29,23 @@ public class Robot extends SampleRobot {
 	RobotDrive myRobot; // class that handles basic drive operations
 	Joystick xboxStick; // set to ID 1 in DriverStation
 	// Joystick logiTech; // set to ID 2 in DriverStation
-	// Relay relay = new Relay(3);
-	private static final int DRIVERIGHT = 5;
-	private static final int DRIVELEFT = 1;
-	CANTalon driveLeftFront = new CANTalon(4);
-	CANTalon driveLeftRear = new CANTalon(3);
-	CANTalon driveRightFront = new CANTalon(1);
-	CANTalon driveRightRear = new CANTalon(2);
-	Victor put = new Victor(1);
+	private static final int DRIVERIGHT = 0;
+	private static final int DRIVELEFT = 2;
+	Talon driveLeft = new Talon(DRIVELEFT);
+	Talon driveRight = new Talon(DRIVERIGHT);
+	Talon put = new Talon(1);
+	Jaguar wheel1 = new Jaguar(3);
+	Jaguar wheel2 = new Jaguar(4);
+	
 	final DriverStation ds = DriverStation.getInstance();
 	boolean engaged = false;
-	DigitalInput limitSwitch = new DigitalInput(1);
+	//DigitalInput limitSwitch = new DigitalInput(1);
 	boolean latch1, latch2;
 
 	public Robot() {
-		myRobot = new RobotDrive(driveLeftFront, driveLeftRear,
-				driveRightFront, driveRightRear);
-		myRobot.setMaxOutput(0.2);
-		myRobot.setExpiration(0.1);
+		myRobot = new RobotDrive(driveLeft, driveRight);
+		myRobot.setMaxOutput(0.7);
+		//myRobot.setExpiration(0.1);
 		xboxStick = new Joystick(1);
 		// logiTech = new Joystick(2);
 	}
@@ -71,7 +69,7 @@ public class Robot extends SampleRobot {
 			drive = true;
 			
 			}
-			Timer.delay(1.3);
+			Timer.delay(3.0);
 			myRobot.drive(0.0, 0.0);
 
 		}
@@ -82,20 +80,34 @@ public class Robot extends SampleRobot {
 		myRobot.isSafetyEnabled();
 		while (true && isOperatorControl() && isEnabled()) {
 			
-			myRobot.tankDrive(-1 * xboxStick.getRawAxis(DRIVELEFT), -1
-					* xboxStick.getRawAxis(DRIVERIGHT));
+			myRobot.tankDrive(xboxStick.getRawAxis(1), xboxStick.getRawAxis(5));
 
 			Timer.delay(0.005); // wait for a motor update time
+			
+			wheel1.isSafetyEnabled();
+			wheel2.isSafetyEnabled();
+			
+			if(xboxStick.getRawButton(3)){
+				wheel1.set(.5);
+			}else{
+				wheel1.set(0.0);
+			}
+			
+			if(xboxStick.getRawButton(3)){
+				wheel2.set(.5);
+			}else{
+				wheel2.set(0.0);
+			}
 
 			if (xboxStick.getRawButton(1)) {
-				put.set(-.1);
+				put.set(-.15);
 				latch1 = true;
 				DriverStation.reportError("Latch LIGHT Hit", false);
 			} else if (xboxStick.getRawButton(2)){
 				put.set(-.2);
 				latch2 = true;
 				DriverStation.reportError("Latch HEAVY Hit", false);
-			} else if (xboxStick.getRawButton(5) && limitSwitch.get() == false) {
+			} else if (xboxStick.getRawButton(5) /*&& limitSwitch.get() == false*/) {
 				if (latch1 == true || latch2 == true) {
 					latch1 = false;
 					latch2 = false;
