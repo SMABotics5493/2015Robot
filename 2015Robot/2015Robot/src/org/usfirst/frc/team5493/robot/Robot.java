@@ -97,7 +97,7 @@ public class Robot extends SampleRobot {
 				wheel2.set(.5);
 			}else{
 				wheel2.set(0.0);
-			}
+			} 
 
 			if (xboxStick.getRawButton(1)) {
 				put.set(-.15);
